@@ -33,10 +33,10 @@ const createTask = async (req, res, next) => {
 const getTasks = async (req, res, next) => {
     try {
         const querySchema = await joiTask.getTasksSchema.validateAsync(req.body);
-        const page = querySchema.metaData?.offset || DEFAULT_OFFSET;
-        const pageSize = querySchema.metaData?.limit || DEFAULT_LIMIT;
-        const sortBy = querySchema.metaData?.sortBy || DEFAULT_SORT_BY;
-        const sortOrder = querySchema.metaData?.sortOrder || DEFAULT_SORT_ORDER;
+        const page = querySchema.metaData?.offset ?? DEFAULT_OFFSET;
+        const pageSize = querySchema.metaData?.limit ?? DEFAULT_LIMIT;
+        const sortBy = querySchema.metaData?.sortBy ?? DEFAULT_SORT_BY;
+        const sortOrder = querySchema.metaData?.sortOrder ?? DEFAULT_SORT_ORDER;
         const sort = {};
         sort[sortBy] = sortOrder;
 
@@ -53,9 +53,9 @@ const getTasks = async (req, res, next) => {
 
         if (querySchema.search) {
             queryDetails.where.$or = [
-                { name: { $regex: searchValue } },
-                { description: { $regex: searchValue } },
-                { status: { $regex: searchValue } }
+                { name: { $regex: querySchema.search } },
+                { description: { $regex: querySchema.search } },
+                { status: { $regex: querySchema.search } }
             ];
         }
 
@@ -68,8 +68,8 @@ const getTasks = async (req, res, next) => {
                 data: {
                     tasks: tasks,
                     metaDate: {
-                        sortBy,
-                        sortOrder,
+                        sortBy: sortBy,
+                        sortOrder: sortOrder,
                         limit: pageSize,
                         offset: page,
                     },
